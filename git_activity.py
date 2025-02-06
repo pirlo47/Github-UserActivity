@@ -86,9 +86,10 @@ def main():
 
     #Process and format the output 
     activities = format_activity(raw_data)
-    print("Output:\n")
+    print("Output:")
+    
     for activity in activities:
-        print(activities)
+        print(activity)
 
 if __name__ == "__main__":
     main() 
