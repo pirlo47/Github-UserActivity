@@ -52,7 +52,7 @@ def fetch_github_activity(username):
     except urllib.error.URLError:
         return f"Error: Unable to connect to the Github API. Check your internet connection."
     
-def fetched_activity(data):
+def format_activity(data):
     """
     Processes Github activity data and display a list of formatted data in  the CLI
     Parameters:
@@ -62,25 +62,33 @@ def fetched_activity(data):
     
     """
     #initialize an empty list of formatted eventts 
-    activity = []
+    formatted_events = []
 
     for event in data:
         event_type = event.get("type")
         repo_name = event.get("repo", {}).get("name", "Unknown Repo")
 
-        
+        #handle different event types 
+        if event_type == "PushEvent":
+            commit_count = len(event.get("payload", {}).get("commits", []))
+            formatted_events.append(f"- Pushed {commit_count} commits to {repo_name}")
 
+        elif event_type == "IssuesEvent":
+            action = event.get("payload", {}).get("action", "unknown action")
+            formatted_events.append(f" - {action.capitalize()} an issue in {repo_name}")
 
-        
+    return formatted_events
+
 def main():
     #Parsing CLI  arguments 
     args = parse_arguments()
-    activity = fetch_github_activity(args.username)
+    raw_data = fetch_github_activity(args.username)
 
-    #print the fetched activity
-    print(activity)
-
-
+    #Process and format the output 
+    activities = format_activity(raw_data)
+    print("Output:\n")
+    for activity in activities:
+        print(activities)
 
 if __name__ == "__main__":
     main() 
