@@ -77,6 +77,16 @@ def format_activity(data):
             action = event.get("payload", {}).get("action", "unknown action")
             formatted_events.append(f" - {action.capitalize()} an issue in {repo_name}")
 
+        elif event_type == "IssuesEvent":
+            action = event.get("payload", {}).get("action", "unknown action")
+            formatted_events.append(f"- {action.capitalize()} an issue in {repo_name}")
+
+        elif event_type == "WatchEvent":
+            formatted_events.append(f"- Starred {repo_name}")
+
+    if not formatted_events:
+        return ["no recent activity found."]
+        
     return formatted_events
 
 def main():
@@ -87,7 +97,7 @@ def main():
     #Process and format the output 
     activities = format_activity(raw_data)
     print("Output:")
-    
+
     for activity in activities:
         print(activity)
 
