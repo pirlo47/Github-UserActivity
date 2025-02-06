@@ -40,9 +40,6 @@ def fetch_github_activity(username):
                 return f"No recent activity found for user: {username}"
             
             return data #Returns raw JSON data for further processing 
-        
-        
-
 
     except urllib.error.HTTPError as e:
         if e.code == 404:
@@ -58,8 +55,10 @@ def fetch_github_activity(username):
 def main():
     #Parsing CLI  arguments 
     args = parse_arguments()
+    activity = fetch_github_activity(args.username)
 
-    print(f"GitHub Username: {args.username}")
+    #print the fetched activity
+    print(activity)
 
 
 
