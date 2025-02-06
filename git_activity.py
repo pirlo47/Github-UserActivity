@@ -51,6 +51,26 @@ def fetch_github_activity(username):
         
     except urllib.error.URLError:
         return f"Error: Unable to connect to the Github API. Check your internet connection."
+    
+def fetched_activity(data):
+    """
+    Processes Github activity data and display a list of formatted data in  the CLI
+    Parameters:
+        JSON response from the Github API 
+    Return:
+        List of formatted activity strings. 
+    
+    """
+    #initialize an empty list of formatted eventts 
+    activity = []
+
+    for event in data:
+        event_type = event.get("type")
+        repo_name = event.get("repo", {}).get("name", "Unknown Repo")
+
+        
+
+
         
 def main():
     #Parsing CLI  arguments 
