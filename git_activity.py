@@ -65,8 +65,8 @@ def format_activity(data):
     formatted_events = []
 
     for event in data:
-        event_type = event.get("type")
-        repo_name = event.get("repo", {}).get("name", "Unknown Repo")
+        event_type = data.get("type")
+        repo_name = data.get("repo", {}).get("name", "Unknown Repo")
 
         #handle different event types 
         if event_type == "PushEvent":
@@ -93,6 +93,15 @@ def main():
     #Parsing CLI  arguments 
     args = parse_arguments()
     raw_data = fetch_github_activity(args.username)
+
+    #Check if raw_data is a list/str
+    if isinstance(raw_data, list):
+        activities = format_activity(raw_data)
+        print("Output:")
+        for activity in activities:
+            print(activity)
+    else:
+        print(raw_data)
 
     #Process and format the output 
     activities = format_activity(raw_data)
