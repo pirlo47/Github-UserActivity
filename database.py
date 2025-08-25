@@ -16,3 +16,16 @@ class User(Base):
     avatar_url = Column(String)
 
     events = relationship("Event", back_populates="user")
+
+class Event(Base):
+    ___tablename___ = "events"
+
+    id = Column(Integer, primary_key=True, index=True)
+    type = Column(String)
+    repo_name = Column(String)
+    created_at = Column(DateTime, default=datetime.datatime.utcnow)
+
+    user_username = Column(String, ForeignKey("users.username"))
+    user = relationship("User", back_populates="events")
+
+Base.metadata.createall(bind=engine)
