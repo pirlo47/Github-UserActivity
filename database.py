@@ -36,7 +36,7 @@ Attributes:
     user (User): Relationship to the associated User object.
 """
 
-DATABASE_URL = "sqlite:////./useractivity.db" #swap later for PostgreSQL 
+DATABASE_URL = "sqlite:///./useractivity.db" #swap later for PostgreSQL 
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread":False})
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
