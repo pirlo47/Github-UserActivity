@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import Base, engine, SessionLocal, User, Event
+from pydantic import BaseModel
+
 
 import requests
 
@@ -13,13 +15,18 @@ def get_db():
         yield db 
     finally:
         db.close()
-
+    
 #Root endpoint 
 @app.get("/")
 def read_root():
     return {"message":"Github User Activity API is running!"}
 
-#add a user manually 
+class UserCreate(BaseModel):
+    username: str 
+
+
+#add a user manually
+@app.post("/user/") 
 def create_user(username: str, db: Session = Depends(get_db)):
     #Fetch data from the Github API 
     url = f"https://api.github.com/users/{username}"
