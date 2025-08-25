@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine, Column, String, Integer, DateTime, ForeignKey
-from sqlalchemy import declarative_base, relationship, sessionmaker
+from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 import datetime
 
 """
@@ -43,7 +43,7 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 Base = declarative_base()
 
 class User(Base):
-    ___tablename___ = "users"
+    __tablename__ = "users"
 
     username = Column(String, primary_key=True, index=True)
     name = Column(String)
@@ -52,14 +52,14 @@ class User(Base):
     events = relationship("Event", back_populates="user")
 
 class Event(Base):
-    ___tablename___ = "events"
+    __tablename__ = "events"
 
     id = Column(Integer, primary_key=True, index=True)
     type = Column(String)
     repo_name = Column(String)
-    created_at = Column(DateTime, default=datetime.datatime.utcnow)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     user_username = Column(String, ForeignKey("users.username"))
     user = relationship("User", back_populates="events")
 
-Base.metadata.createall(bind=engine)
+Base.metadata.create_all(bind=engine)
