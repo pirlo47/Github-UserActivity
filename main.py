@@ -2,11 +2,31 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import Base, engine, SessionLocal, User, Event
 from pydantic import BaseModel
-
-
 import requests
+"""
+main.py
+FastAPI application for tracking GitHub user activity.
+Endpoints:
+- GET /: Root endpoint to check API status.
+- POST /user/: Add a GitHub user to the database by username.
+- GET /users/: List all users in the database.
+- POST /users/{username}/events: Fetch and save GitHub events for a user.
+- GET /users/{username}/events: Retrieve saved events for a user.
+Dependencies:
+- get_db: Provides a SQLAlchemy database session.
+Models:
+- UserCreate: Pydantic model for user creation.
+Database:
+- Uses SQLAlchemy ORM models: User, Event.
+- Session management via SessionLocal.
+External APIs:
+- Fetches user and event data from GitHub public API.
+Error Handling:
+- Returns HTTP 404 if user or events are not found on GitHub or in the database.
+"""
 
 app = FastAPI()
+
 
 #Dependency for DB session 
 def get_db():
