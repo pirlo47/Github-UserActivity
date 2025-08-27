@@ -1,5 +1,5 @@
 [tool.semantic_release]
 version_variable = "main.py:__version__"
-commit_parser = "angular" 
+commit_parser = "conventional" 
 changelog_file = "CHANGELOG.md" 
 upload_to_pypi = false
