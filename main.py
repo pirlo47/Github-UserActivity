@@ -1,3 +1,5 @@
+__version__ = "0.0.0"
+
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import Base, engine, SessionLocal, User, Event
