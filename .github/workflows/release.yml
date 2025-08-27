@@ -22,15 +22,15 @@ jobs:
             - name: Install Dependencies
               run: |
                 python -m pip install --upgrade pip
-                pip install semantic-release
+                pip install python-semantic-release
             
             - name: Run semantic_release
               env:
                 GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
-                semantic_release version
-                semantic_release changelog
-                semantic_release publish
+                semantic-release version
+                semantic-release changelog
+                semantic-release publish
 
                 
         
