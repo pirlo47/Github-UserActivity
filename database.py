@@ -1,7 +1,8 @@
+from dotenv import load_dotenv
 from sqlalchemy import create_engine, Column, String, Integer, DateTime, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 import datetime
-
+import os 
 """
 This module defines the SQLAlchemy ORM models and database setup for tracking GitHub user activity.
 
@@ -36,9 +37,21 @@ Attributes:
     user (User): Relationship to the associated User object.
 """
 
-DATABASE_URL = "sqlite:///./useractivity.db" #swap later for PostgreSQL 
+#load environment variables
+load_dotenv()
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread":False})
+
+#Fallback to SQLite for dev/test
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./useractivity.db" )
+
+engine = create_engine(
+    DATABASE_URL, 
+    pool_size=10, 
+    max_overflow=20,
+    pool_timeout=30,
+    pool_recycle=1800,
+    connect_args={} if "sqlite" not in DATABASE_URL else {"check_same_thread": False}
+)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 Base = declarative_base()
 
@@ -62,4 +75,5 @@ class Event(Base):
     user_username = Column(String, ForeignKey("users.username"))
     user = relationship("User", back_populates="events")
 
+#For dev only; I'll use Alembic migrations in production
 Base.metadata.create_all(bind=engine)

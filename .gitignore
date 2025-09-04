@@ -8,7 +8,9 @@ gitUserActivity/
 githubActivity/
 gitUserVenv/
 venv/
-env/
+
+#enviromental variables
+.env
 
 # Distribution / packaging
 build/

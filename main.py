@@ -1,4 +1,4 @@
-__version__ = "0.0.0"
+__version__ = "1.0.0"
 
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session

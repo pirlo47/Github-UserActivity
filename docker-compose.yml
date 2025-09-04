@@ -1,0 +1,19 @@
+version: "3.9"
+
+services: 
+  db:
+    image: postgres:15
+    container_name: github_activity_db
+    restart: always
+    environment:
+      POSTGRES_USER: app_user 
+      POSTGRES_PASSWORD: postgres_password123
+      POSTGRES_DB: github_activity
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/postgres_data
+    
+volumes:
+    postgres_data:
+    
