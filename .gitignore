@@ -51,3 +51,6 @@ coverage.xml
 .idea/
 *.swp
 *.swo
+
+#Virtual Env 
+*.venv
