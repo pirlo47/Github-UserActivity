@@ -88,20 +88,34 @@ def fetch_events(username: str, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == username).first()
     if not user:
         raise HTTPException(status_code=404, detail=f"User not in database")
-    
-    for e in data:
+
+    incoming_ids = [e["id"] for e in data]
+    existing_ids = {
+        gid for (gid,) in db.query(Event.github_event_id)
+        .filter(Event.github_event_id.in_(incoming_ids))
+        .all()
+    }
+
+    new_count = 0 
+    for e in data: 
+        if e["id"] in existing_ids:
+            continue 
         event = Event(
-            type=e["type"],
-            repo_name=e["repo"]["name"],
-            created_at=parse_github_time(e["created_at"]), 
+            github_event_id=e["id"],
+            type=e["type"], 
+            repo_name=e["repo"]["name"], 
+            created_at = parse_github_time(e["created_at"]), 
         )
-        event.user = user 
+        event.user = user
         db.add(event)
+        existing_ids.add(e["id"])
+        new_count += 1 
+
     db.commit()
-    return {"message": f"Events for {username} saved."}
+    return {"message": f"Saved {new_count} new events for {username}; {len(data) - new_count } already stored."} 
+
 
 #Get events for a user 
 @app.get("/users/{username}/events")
 def get_events(username: str, db: Session = Depends(get_db)):
     return db.query(Event).filter(Event.user_username == username).all()
-
