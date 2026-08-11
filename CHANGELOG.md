@@ -2,6 +2,25 @@
 
 <!-- version list -->
 
+## v1.1.0 (2026-08-11)
+
+### Chores
+
+- **.gitignore**: Add entry for virtual environment files
+  ([`3278645`](https://github.com/pirlo47/Github-UserActivity/commit/32786459ab1b6b07879ff68eb3e089901b22e16e))
+
+- **database**: Add PostgreSQL database dump and initial schema setup
+  ([`83a928c`](https://github.com/pirlo47/Github-UserActivity/commit/83a928c0b13b928fa9196b6fbcc8ba907bd40c68))
+
+- **migrations**: Alembic successfully connected to your Postgres container and ran the migrations
+  ([`3d11224`](https://github.com/pirlo47/Github-UserActivity/commit/3d112244988a75e0e236220973e5fe57905ca781))
+
+### Features
+
+- Add helper function to parse GitHub timestamps and integrate it into event creation
+  ([`6c97bef`](https://github.com/pirlo47/Github-UserActivity/commit/6c97bef3804371a40dd749ff033e3c8807ffbd41))
+
+
 ## v1.0.0 (2025-08-27)
 
 ### Bug Fixes
