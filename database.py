@@ -68,6 +68,7 @@ class Event(Base):
     __tablename__ = "events"
 
     id = Column(Integer, primary_key=True, index=True)
+    github_event_id = Column(String, unique=True, index=True)
     type = Column(String)
     repo_name = Column(String)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
