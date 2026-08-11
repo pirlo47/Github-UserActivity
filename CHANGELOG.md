@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v1.2.0 (2026-08-11)
+
+### Features
+
+- **database**: Add unique github_event_id to Event model and implement deduplication in event
+  fetching
+  ([`9513921`](https://github.com/pirlo47/Github-UserActivity/commit/9513921cec2685ead479d622556efa79c28664a2))
+
+
 ## v1.1.0 (2026-08-11)
 
 ### Chores
