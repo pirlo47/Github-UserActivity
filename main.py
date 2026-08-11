@@ -4,7 +4,9 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import Base, engine, SessionLocal, User, Event
 from pydantic import BaseModel
+from datetime import datetime, timezone
 import requests
+
 """
 main.py
 FastAPI application for tracking GitHub user activity.
@@ -28,6 +30,12 @@ Error Handling:
 """
 
 app = FastAPI()
+
+#helper func to convert github timestamp into native UTC datetime
+def parse_github_time(value: str ) -> datetime:
+
+    dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    return dt.astimezone(timezone.utc).replace(tzinfo=None)
 
 
 #Dependency for DB session 
@@ -85,6 +93,7 @@ def fetch_events(username: str, db: Session = Depends(get_db)):
         event = Event(
             type=e["type"],
             repo_name=e["repo"]["name"],
+            created_at=parse_github_time(e["created_at"]), 
         )
         event.user = user 
         db.add(event)
