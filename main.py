@@ -6,6 +6,7 @@ from database import Base, engine, SessionLocal, User, Event
 from pydantic import BaseModel
 from datetime import datetime, timezone
 import requests
+import os
 
 """
 main.py
@@ -29,8 +30,25 @@ Error Handling:
 - Returns HTTP 404 if user or events are not found on GitHub or in the database.
 """
 
+
 app = FastAPI()
 
+
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+
+def github_headers() -> dict:
+    """
+       Auth + recommended headers for te github rest API.
+    """
+    headers = {
+        "Accept": "application/vnd.github+json", 
+        "X-Github-Api-Version": "2022-11-28", 
+    }
+    if GITHUB_TOKEN: 
+        headers["Authorization"] = f"Bearer {GITHUB_TOKEN}"
+    return headers
+
+    
 #helper func to convert github timestamp into native UTC datetime
 def parse_github_time(value: str ) -> datetime:
 
@@ -60,7 +78,7 @@ class UserCreate(BaseModel):
 def create_user(username: str, db: Session = Depends(get_db)):
     #Fetch data from the Github API 
     url = f"https://api.github.com/users/{username}"
-    r = requests.get(url)
+    r = requests.get(url, headers=github_headers())
     if r.status_code != 200:
         raise HTTPException(status_code=404, detail="User not found")
     data = r.json()
@@ -80,7 +98,7 @@ def list_users(db: Session = Depends(get_db)):
 @app.post("/users/{username}/events")
 def fetch_events(username: str, db: Session = Depends(get_db)):
     url = f"https://api.github.com/users/{username}/events"
-    r = requests.get(url)
+    r = requests.get(url, headers=github_headers())
     if r.status_code != 200:
         raise HTTPException(status_code=404, detail=f"Events for user {username} not found")
     data = r.json()
