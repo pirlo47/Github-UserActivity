@@ -9,7 +9,7 @@ MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
 client = MongoClient(MONGO_URL)
 db = client["github-activity-dev"]
 
-user = db["users"]
+users = db["users"]
 events = db["events"]
 
 #set _id = github event id, so dedupe is automatic and needs no index.
