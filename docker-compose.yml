@@ -1,19 +1,16 @@
 version: "3.9"
 
-services: 
-  db:
-    image: postgres:15
-    container_name: github_activity_db
+services:
+  mongo:
+    image: mongo:7
+    container_name: github_activity_mongo
     restart: always
-    environment:
-      POSTGRES_USER: app_user 
-      POSTGRES_PASSWORD: postgres_password123
-      POSTGRES_DB: github_activity
     ports:
-      - "5432:5432"
+      - "27017:27017"
     volumes:
-      - postgres_data:/var/lib/postgresql/postgres_data
-    
+      - mongo_data:/data/db
+
 volumes:
-    postgres_data:
+  mongo_data:
+
     
