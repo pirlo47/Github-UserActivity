@@ -114,3 +114,41 @@ def fetch_events(username: str):
 @app.get("/users/{username}/events")
 def get_events(username: str):
     return list(events.find({"username": username}).sort("created_at", -1))
+
+PERIOD_UNITS = {"day": "day", "week": "week", "month": "month"}
+
+@app.get("/users/{username}/metrics/throughput")
+def throughput(username: str, period: str = "week"):
+    """Throughput over time: commits, pushes, PRs and issues per period."""
+    unit = PERIOD_UNITS.get(period)
+    if unit is None:
+        raise HTTPException(status_code=400, detail="period must be day, week, or month")
+
+    pipeline = [
+        {"$match": {"username": username}},
+        {"$group": {
+            "_id": {"$dateTrunc": {"date": "$created_at", "unit": unit}},
+            "commits":       {"$sum": {"$ifNull": ["$commit_count", 0]}},
+            "pushes":        {"$sum": {"$cond": [{"$eq": ["$type", "PushEvent"]}, 1, 0]}},
+            "prs_opened":    {"$sum": {"$cond": [
+                {"$and": [{"$eq": ["$type", "PullRequestEvent"]}, {"$eq": ["$action", "opened"]}]}, 1, 0]}},
+            "prs_merged":    {"$sum": {"$cond": [{"$eq": ["$pr_merged", True]}, 1, 0]}},
+            "issues_opened": {"$sum": {"$cond": [
+                {"$and": [{"$eq": ["$type", "IssuesEvent"]}, {"$eq": ["$action", "opened"]}]}, 1, 0]}},
+            "total_events":  {"$sum": 1},
+        }},
+        {"$sort": {"_id": 1}},
+        {"$project": {
+            "_id": 0,
+            "period_start": "$_id",
+            "commits": 1, "pushes": 1,
+            "prs_opened": 1, "prs_merged": 1,
+            "issues_opened": 1, "total_events": 1,
+        }},
+    ]
+
+    return {
+        "username": username,
+        "period": period,
+        "buckets": list(events.aggregate(pipeline)),
+    }
