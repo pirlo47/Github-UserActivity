@@ -152,3 +152,37 @@ def throughput(username: str, period: str = "week"):
         "period": period,
         "buckets": list(events.aggregate(pipeline)),
     }
+
+@app.get("/users/{username}/metrics/pr-flow")
+def pr_flow(username: str, period: str = "week"):
+    """PR throughput per period: opened vs merged, from the event action field.
+    (Cycle-time duration isn't available from the events feed.)"""
+    unit = PERIOD_UNITS.get(period)
+    if unit is None:
+        raise HTTPException(status_code=400, detail="period must be day, week, or month")
+
+    pipeline = [
+        {"$match": {"username": username, "type": "PullRequestEvent"}},
+        {"$group": {
+            "_id": {"$dateTrunc": {"date": "$created_at", "unit": unit}},
+            "prs_opened": {"$sum": {"$cond": [{"$eq": ["$action", "opened"]}, 1, 0]}},
+            "prs_merged": {"$sum": {"$cond": [{"$eq": ["$action", "merged"]}, 1, 0]}},
+            "pr_events":  {"$sum": 1},
+        }},
+        {"$sort": {"_id": 1}},
+        {"$project": {
+            "_id": 0,
+            "period_start": "$_id",
+            "prs_opened": 1,
+            "prs_merged": 1,
+            "pr_events": 1,
+            "merge_rate": {
+                "$cond": [
+                    {"$gt": ["$prs_opened", 0]},
+                    {"$round": [{"$divide": ["$prs_merged", "$prs_opened"]}, 2]},
+                    None,
+                ]
+            },
+        }},
+    ]
+    return {"username": username, "period": period, "buckets": list(events.aggregate(pipeline))}
