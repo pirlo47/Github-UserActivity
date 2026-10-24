@@ -132,7 +132,7 @@ def throughput(username: str, period: str = "week"):
             "pushes":        {"$sum": {"$cond": [{"$eq": ["$type", "PushEvent"]}, 1, 0]}},
             "prs_opened":    {"$sum": {"$cond": [
                 {"$and": [{"$eq": ["$type", "PullRequestEvent"]}, {"$eq": ["$action", "opened"]}]}, 1, 0]}},
-            "prs_merged":    {"$sum": {"$cond": [{"$eq": ["$pr_merged", True]}, 1, 0]}},
+            "prs_merged": {"$sum": {"$cond": [{"$eq": ["$action", "merged"]}, 1, 0]}},
             "issues_opened": {"$sum": {"$cond": [
                 {"$and": [{"$eq": ["$type", "IssuesEvent"]}, {"$eq": ["$action", "opened"]}]}, 1, 0]}},
             "total_events":  {"$sum": 1},
